@@ -1,0 +1,74 @@
+Table events {
+  id bigserial [pk]
+  name varchar [not null]
+  init_date date [not null]
+  end_date date [not null]
+  active bool [not null, default: true]
+  created_at timestamptz [default: 'now']
+}
+
+Table users {
+  id bigserial [pk]
+  name varchar [not null]
+  last_name varchar [not null]
+  email varchar [not null, unique]
+  hashed_password varchar [not null]
+  phone varchar [not null]
+  user_type varchar [not null, default: 'Participante']
+  avatar_path varchar [not null, default: '/assets/images/user/user.png']
+  password_changed_at timestamptz [not null, default: '0001-01-01 00:00:00Z']
+  created_at timestamptz [default: 'now']
+
+  indexes {
+    email
+  }
+}
+
+Table cientifics_works {
+  id bigserial [pk]
+  title varchar [not null, unique]
+  author_id integer [ref: > users.id, not null]
+  inscription_id integer [ref: > inscriptions.id, not null]
+  resume text [not null, default: 'Resumo do trabalho']
+  file varchar [not null]
+  presentation_type varchar [not null, default: 'Presencial']
+  exposition_type varchar [not null, default: 'Apresantaçâo']
+  created_at timestamptz [default: 'now']
+
+  indexes {
+    title
+  }
+}
+
+Table inscriptions {
+  id bigserial [pk]
+  user_id integer [ref: > users.id, not null]
+  event_id integer [ref: > events.id, not null]
+  created_at timestamptz [default: 'now']
+}
+
+Table payment_rate {
+  id bigserial [pk]
+  event_id integer [ref: > events.id, not null]
+  user_type varchar [not null, default: 'Participante']
+  presentation_type varchar [not null, default: 'Presencial']
+  amount integer [not null, default: 1000]
+  created_at timestamptz [default: 'now']
+}
+
+Table payment {
+  id bigserial [pk]
+  user_id integer [ref: > users.id, not null]
+  event_id integer [ref: > events.id, not null]
+  inscription_id integer [ref: > inscriptions.id, not null, unique]
+  user_type varchar [not null, default: 'Participante']
+  presentation_type varchar [not null, default: 'Presencial']
+  amount integer [not null, default: 1000]
+  is_paid bool [not null, default: false]
+  proof_payment_path varchar not null, default: 'assets/proof_payment'],
+  created_at timestamptz [default: 'now']
+
+  indexes {
+    user_id
+  }
+}
